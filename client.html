@@ -1,0 +1,111 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.io Chat</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    #chat-box {
+      width: 300px;
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+    }
+    #message-input {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h2>One-to-One Chat</h2>
+  
+  <label for="username">Username: </label>
+  <input type="text" id="username" placeholder="Enter your username">
+  <button onclick="registerUser()">Register</button>
+  <br><br>
+  <button onclick="getUser()">getUser</button>
+  <br><br>
+
+  <div id="user_box"></div>
+  <label for="recipient">Recipient: </label>
+  <div id="chat-box"></div>
+  
+  <input type="text" id="message-input" placeholder="Type a message">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const socket = io();
+
+    let username = 'amarjeet kus';
+    let userid= '67b4216a2bd2cc6f0fbe73f5';
+    let recipient = '67b42a8a2bd2cc6f0fbe7410';
+
+    function registerUser() {
+      username = document.getElementById('username').value;
+      if (username) {
+        socket.emit('register', username);
+      }
+    }
+    function sendMessage() {
+      const message = document.getElementById('message-input').value;
+      const chatBox = document.getElementById('chat-box');
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${username}: ${message}`;
+      chatBox.appendChild(messageElement);
+      if (message && recipient) {
+        socket.emit('message',  {
+      "sender": userid,
+      "receiver": recipient,
+      "userName": username,
+      "isRead": false,
+      "content": message,
+      "messageType": "text"
+    });
+        document.getElementById('message-input').value = ''; // Clear input
+      }
+    }
+
+    socket.on('message', (data) => {
+ 
+      const chatBox = document.getElementById('chat-box');
+      const messageElement = document.createElement('div');
+      console.log(data + username + data.receiver   +recipient)
+if(data.receiver == username ){
+
+  messageElement.textContent = `${data.userName}: ${data.content}`;
+  chatBox.appendChild(messageElement);
+}
+
+   
+    });
+
+
+    function getUser(){
+
+      fetch("http://localhost:5001/getuser")
+  .then((response) => response.json()) // Convert response to JSON
+  .then((data) => {
+    const userBox = document.getElementById('user_box');
+  userBox.innerHTML=""
+for(let i=0;i<data.length;i++){
+
+  const messageElement = document.createElement('div');
+      messageElement.innerHTML = '<input type="radio" onclick="setUser()" id="html" name="users" value="'+data[i].username+'"><label for="html">'+data[i].username+'</label><br>';
+      userBox.appendChild(messageElement);
+}
+
+
+  }) // Handle the data
+  .catch((error) => console.error("Error fetching data:", error));
+
+    }
+
+   function setUser(){
+    recipient = document.querySelector('input[name="users"]:checked').value;
+console.log(recipient)
+   }
+  </script>
+</body>
+</html>
