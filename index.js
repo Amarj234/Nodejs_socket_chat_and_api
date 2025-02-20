@@ -20,7 +20,7 @@ let users = {};
 
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://xenstag:zSx1crxK80QwhQ2A@xenett.okyggrr.mongodb.net/flutter_app?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://xenstag:zSx1crxK8@0QwhQ2A@xenett.okyggrr.mongodb.net/flutter_app?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB...'))
   .catch((err) => console.error('Could not connect to MongoDB...', err));
 
